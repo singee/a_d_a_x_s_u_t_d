@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<title>1GFS X-SMART Demo</title>
+
+	<link rel="stylesheet" href="b/css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/font.css">
+	<link rel="stylesheet" href="css/animate.css">
+	<link rel="stylesheet" href="css/sidebar.css">
+	<link rel="stylesheet" href="css/loading.css">
+	<link rel="stylesheet" href="css/login.css">
+	<link rel="stylesheet" href="css/blur.css">
+	<link rel="stylesheet" href="css/timeline.css">
+
+	<link rel="stylesheet" href="css/semantic_ui/semantic.min.css">
+
+	<style type="text/css">
+
+		body {
+			/*
+			background: #76b852;
+			background: -webkit-linear-gradient(right, #76b852, #8DC26F);
+			background: -moz-linear-gradient(right, #76b852, #8DC26F);
+			background: -o-linear-gradient(right, #76b852, #8DC26F);
+			*/
+			background: linear-gradient(to bottom, #ACF, #A3CCFF);
+			/*
+			background-image: url('bg-sample.jpg');
+			background-size: cover;
+			background-position: top center !important;
+			background-repeat: no-repeat !important;
+			*/
+
+			font-family: "roboto", sans-serif;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+
+			overflow: hidden;
+		}
+
+		#wrapper {
+				-webkit-filter: blur(0px);
+				filter: blur(0px);
+		}
+
+		.card {
+			position: relative;
+			height: 100%;
+			/*outline: dashed rgba(0, 0, 0, 0.25);*/
+			background: transparent;
+			pointer-events: all;
+		}
+
+		#page-content-wrapper {
+			-webkit-transition: all 0.3s ease;
+			transition: all 0.3s ease;
+		}
+
+		.signage {
+			position: absolute;
+			outline: dashed rgba(0, 0, 0, 0.25);
+			background: rgba(250, 250, 250, 0.8);
+			padding: 10px;
+			color: black;
+			font-size: 12px;
+			opacity: 0;
+
+			pointer-events: none;
+
+			-webkit-transition: all 0.3s ease;
+			transition: all 0.3s ease;
+		}
+
+		.highlight {
+			/*font-size: 14px;*/
+			opacity: 1;
+		}
+
+		.current-app
+		{
+			color: rgb(255, 0, 0);
+		}
+
+		.underlay {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			top: 0;
+			right: 0;
+			margin: 0;
+			padding: 0;
+		}
+
+		#layers-menu {
+			position: absolute;
+			top: 60px;
+			right: 0px;
+			width: 200px;
+
+			-webkit-animation-duration: 0.3s;
+			animation-duration: 0.3s;
+		}
+
+		#apps-menu {
+			position: absolute;
+			top: 60px;
+			right: 0px;
+			width: 200px;
+
+			-webkit-animation-duration: 0.3s;
+			animation-duration: 0.3s;
+		}
+
+		.list-group-item {
+			-webkit-transition: all 0.3s;
+			transition: all 0.3s;
+		}
+		.list-group-item:hover {
+			background-color: rgb(200,220,250);
+		}
+
+		.phantom {
+			position: absolute;
+			width: 48%;
+			height: 200px;
+			background: rgba(255, 255, 255, 0.9);
+/*
+			-ms-transform: scale(0.5, 0.5);
+			-webkit-transform: scale(0.5, 0.5);
+			transform: scale(0.5, 0.5);
+*/
+
+			box-shadow: 1px 1px 6px 2px rgba(3,3,3,0.1);
+		}
+		.phantom-left {
+			/*
+			-ms-transform-origin: left bottom;
+			-webkit-transform-origin: left bottom;
+			transform-origin: left bottom;
+			*/
+			
+			left: 10px; bottom: 10px;
+		}
+		.phantom-right {
+			/*
+			-ms-transform-origin: right bottom;
+			-webkit-transform-origin: right bottom;
+			transform-origin: right bottom;
+			*/
+
+			right: 10px; bottom: 10px;
+		}
+		.phantom2 {
+			/*position: relative;*/
+			width: 100%;
+			height: 100%;
+		}
+		.phantom-handle {
+			position: relative;
+			width: 100%;
+			height: 0px;
+			/*
+			top: -204px;
+			bottom: 204px;
+			*/
+
+			//background: rgba(255, 10, 10, 0.75);
+			/*box-shadow: 1px 1px 6px 2px rgba(3,3,3,0.5);*/
+
+			-webkit-transition-duration: 0.3s;
+			transition-duration: 0.3s;
+		}
+
+		.container
+		{
+			position:absolute;
+			left:0px;
+			top:0px;
+			right:0px;
+			bottom:0px;
+			width: 100%;
+			overflow:hidden;
+			/*background: rgba(0,0,0,0.2);*/
+			pointer-events: none;
+			padding: 0;
+			margin: 0;
+		}
+		
+		.ui.selection.dropdown{
+			margin-top: 20px;
+		}
+		
+		#close {
+			float:right;
+			position: relative;
+			display:inline-block;
+			padding:2px 5px;
+			background:#ccc;
+			top: -224px;
+			bottom: 204px;
+			height: 20px;
+			width: 20px;
+		}
+
+	</style>
+
+</head>
+
+<body style="height: 100%;">
+
+	<div class="navbar navbar-default navbar-static-top" style="margin: 0; box-shadow: 0px 4px 6px rgba(0,0,0,0.1);">
+		<button class="btn navbar-btn" style="background:transparent; outline: none;" onclick="toggleSidebar()">
+			<span class="glyphicon glyphicon-menu-hamburger"></span>
+		</button>
+		<strong style="font:roboto-bold">1GFS X<span style="color:#1e90ff;font-size:120%;">-</span>SMART</strong> | Ezlink Demo
+		<div class="pull-right spinner"></div>
+
+		<!--button type="button" class="pull-right btn navbar-btn" style="background:transparent; outline: none; margin: 0;" onclick="logout()">
+			<div class="row">
+				<span class="glyphicon glyphicon-log-out"></span>
+			</div>
+			<small>Logout</small>
+		</button-->
+<button class="ui mini negative basic button right floated compact" style="margin-top:12px;" onclick="logout()">
+	Log Out  <i class="sign out icon"></i>
+<button class="ui mini basic primary button right floated compact" style="margin-top:12px;" onclick="setMode('aggregation')">Aggregate</button>
+<button class="ui mini basic primary button right floated compact" style="margin-top:12px;" onclick="setMode('simulation')">Animate</button>
+</button>
+
+		<button type="button" class="pull-right btn navbar-btn" style="background:transparent; outline: none; margin: 0;" onclick="toggleLayersMenu()">
+			<div class="row">
+				<span class="glyphicon glyphicon-align-left"></span>
+			</div>
+			<small>Layers</small>
+		</button>
+		<button type="button" class="pull-right btn navbar-btn" style="background:transparent; outline: none; margin: 0;" onclick="resetView()">
+			<div class="row">
+				<span class="glyphicon glyphicon-refresh"></span>
+			</div>
+			<small>Reset View</small>
+		</button>
+
+	</div>
+
+	<div id="wrapper" style="height: 80%;">
+
+		<!-- Sidebar -->
+		<div id="sidebar-wrapper">
+
+			<div class="ui pointing secondary menu">
+				<a class="active item" data-tab="first">Query</a>
+				<a class="item" data-tab="second">Charts</a>
+				<a class="item" data-tab="third">Others...</a>
+			</div>
+			<div class="ui active tab segment" data-tab="first">
+				<div class="ui pointing below label">
+					Date
+				</div>
+				<div class="ui selection dropdown" id="date">
+				<input type="hidden" name="date">
+				<i class="dropdown icon"></i>
+				<div class="default text">Date</div>
+				<div class="menu">
+					<div class="item" data-value="01">1</div>
+					<div class="item" data-value="02">2</div>
+					<div class="item" data-value="03">3</div>
+					<div class="item" data-value="04">4</div>
+					<div class="item" data-value="05">5</div>
+					<div class="item" data-value="06">6</div>
+					<div class="item" data-value="07">7</div>
+					<div class="item" data-value="08">8</div>
+					<div class="item" data-value="09">9</div>
+					<div class="item" data-value="10">10</div>
+					<div class="item" data-value="11">11</div>
+					<div class="item" data-value="12">12</div>
+					<div class="item" data-value="13">13</div>
+					<div class="item" data-value="14">14</div>
+					<div class="item" data-value="15">15</div>
+					<div class="item" data-value="16">16</div>
+					<div class="item" data-value="17">17</div>
+					<div class="item" data-value="18">18</div>
+					<div class="item" data-value="19">19</div>
+					<div class="item" data-value="20">20</div>
+					<div class="item" data-value="21">21</div>
+					<div class="item" data-value="22">22</div>
+					<div class="item" data-value="23">23</div>
+					<div class="item" data-value="24">24</div>
+					<div class="item" data-value="25">25</div>
+					<div class="item" data-value="26">26</div>
+					<div class="item" data-value="27">27</div>
+					<div class="item" data-value="28">28</div>
+					<div class="item" data-value="29">29</div>
+					<div class="item" data-value="30">30</div>
+				</div>
+			</div>
+			<div class="ui divider"></div>
+			<div class="ui pointing below label">
+					Month
+			</div>
+			<div class="ui selection dropdown" id="month">
+				<input type="hidden" name="month">
+				<i class="dropdown icon"></i>
+				<div class="default text">Month</div>
+				<div class="menu">
+					<div class="item" data-value="01">1</div>
+					<div class="item" data-value="02">2</div>
+					<div class="item" data-value="03">3</div>
+				</div>
+			</div>	
+			<div class="ui divider"></div>
+			
+			<div class="ui pointing below label">
+					30-min time slot from
+			</div>
+			<div class="ui selection dropdown" id="time">
+				<input type="hidden" name="time">
+				<i class="dropdown icon"></i>
+				<div class="default text">Pre-defined Time</div>
+				<div class="menu">
+					<div class="item" data-value="07:30:00">7:30 AM</div>
+					<div class="item" data-value="08:00:00">8:00 AM</div>
+					<div class="item" data-value="08:30:00">8:30 AM</div>
+					<div class="item" data-value="09:00:00">9:00 AM</div>
+					<div class="item" data-value="13:00:00">1:00 PM</div>
+					<div class="item" data-value="14:00:00">2:00 PM</div>
+					<div class="item" data-value="17:30:00">5:30 PM</div>
+					<div class="item" data-value="18:00:00">6:00 PM</div>
+					<div class="item" data-value="18:30:00">6:30 PM</div>
+					<div class="item" data-value="19:00:00">7:00 PM</div>
+					<div class="item" data-value="20:00:00">8:00 PM</div>
+					<div class="item" data-value="21:00:00">9:00 PM</div>
+
+				</div>
+			</div>
+			<div class="ui divider"></div>
+
+			<div class="inline field">
+			
+			<div class="ui pointing below label">
+					Number of stations
+			</div>
+			<div class="ui selection dropdown" id="count">
+				<input type="hidden" name="time">
+				<i class="dropdown icon"></i>
+				<div class="default text">Number of stations</div>
+				<div class="menu">
+					<div class="item" data-value="-1">All</div>
+					<div class="item" data-value="5">5</div>
+					<div class="item" data-value="10">10</div>
+					<div class="item" data-value="15">15</div>
+					<div class="item" data-value="20">20</div>
+					<div class="item" data-value="25">25</div>
+					<div class="item" data-value="30">30</div>
+					<div class="item" data-value="50">50</div>
+					<div class="item" data-value="100">100</div>
+				</div>
+			</div>
+			</div>
+			</div>
+			<div class="ui tab segment" data-tab="second">
+				<h3 class="ui header">Charts</h3>				
+					<button class="ui button chart1" onclick="chart1()">Taps Out by Date</button>
+					<div class="ui divider"></div>
+					<button class="ui button chart2" onclick="chart2()">Taps Out by Stations</button>
+			</div>
+			<div class="ui tab segment" data-tab="third">
+				<h3 class="ui header">View Dimensions</h3>
+					<div class="ui toggle button">Toggle the view</div>
+  					<div class="ui test toggle checkbox first">
+					  <input type="checkbox" name="viewByTapsOut" id="viewByTapsOut" checked="checked">
+					  <label>View by Taps Out</label>
+					</div>
+					<div class="ui test toggle checkbox second">
+					  <input type="checkbox" name="viewBySpending" id="viewBySpending">
+					  <label>View by Spending</label>
+					</div>	
+
+				<div class="ui divider"></div>
+  				<h3 class="ui header">View by</h3>
+
+				<div class="ui large buttons">
+					<button class="ui button active" onclick="setDarkMode(false)">Bright Mode</button>
+					<div class="or"></div>
+					<button class="ui button" onclick="setDarkMode(true)">Dark Mode</button>
+				</div>
+				
+				<div class="ui divider"></div>
+  				<h3 class="ui header">Data Set</h3>
+				
+				<div class="field">
+					<label>Data Set Name</label>
+					<input type="text" name="dsname1" id="dsname1" placeholder="Data Set Name" >
+				</div>
+				<button class="ui button datset" onclick="changeDataSet()">Change Data Set</button>
+				
+			</div>
+
+		</div>
+		<!-- /#sidebar-wrapper -->
+
+		<!-- Page Content -->
+		<div id="page-content-wrapper" style="height: 100%;">
+			<div class="container-fluid" style="height: 100%; padding: 0;">
+				<div class="row underlay">
+					<div class="col-lg-12" style="height: 100%; padding: 0;">
+						<div class="card card-block" style="height: 100%; position: relative;" id="block1">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /#page-content-wrapper -->
+
+		<div id="layers-menu">
+			<ul class="list-group" id="layers-menu-list">
+				<li class="list-group-item" onclick="map3d.explodeLayers(0.1, 500)"><span style="cursor:context-menu;"><span class="glyphicon glyphicon-resize-full" style="padding-right:1em;"></span>Expand</span></li>
+				<li class="list-group-item" onclick="map3d.explodeLayers(0, 500)"><span style="cursor:context-menu;"><span class="glyphicon glyphicon-resize-small" style="padding-right:1em;"></span>Collapse</span></li>
+			</ul>
+		</div>
+
+		<div class="phantom phantom-left" id="slot2-container">
+
+			<div id="slot2" class="phantom2"></div>
+			<div id="slot2-handle" class="phantom-handle"></div>
+			<span id='close' onclick='document.getElementById("slot2-container").style.visibility = "hidden";'>x</span>
+
+		</div>
+		<div class="phantom phantom-right" id="slot4-container">
+			<div id="slot4" class="phantom2"></div>
+			<div id="slot4-handle" class="phantom-handle"></div>
+			<span id='close' onclick='document.getElementById("slot4-container").style.visibility = "hidden";'>x</span>
+
+		</div>
+
+		<div id="blocker" style="background-color: rgba(1, 1, 1, 0.07); bottom: 0; left: 0; position: fixed; right: 0; top: 0; display: none;"></div>
+	</div>
+	<!-- /#wrapper -->
+
+
+	<div class="login-page" id="login-page">
+		<div class="form">
+			<form class="login-form">
+				<input type="text" placeholder="username" id="nameInput" value="apiuser01"/>
+				<input type="password" placeholder="password" id="passwordInput" value="password"/>
+				<div onclick="processLogin()" id="submitButton">login</div>
+				<p class="message">Not registered? <a href="http://10.217.133.188:8085">Create an account</a></p>
+			</form>
+		</div>
+	</div>
+
+	<div id="timeline" class="container"></div>
+
+	<div class="signage"></div>
+
+
+	<script src="js/adax-bundle.min.js"></script>
+	<script src="js/helpers.js"></script>
+
+	<script src="js/jquery.min.js"></script>
+	<script src="b/js/bootstrap.min.js"></script>
+
+	<script src="js/moment.min.js"></script>
+	<script src="js/crossfilter.min.js"></script>
+	<script src="js/jquery.slimscroll.min.js"></script>
+
+	<script src="js/misc.js"></script>
+
+	<script src="js/gsap/TweenLite.min.js"></script>
+	<script src="js/gsap/utils/Draggable.min.js"></script>
+	<script src="js/gsap/plugins/CSSPlugin.min.js"></script>
+
+	<script src="js/semantic.min.js"></script>
+	
+
+	<!-- the main code goes here now -->
+	<script src="js/main.js"></script>
+
+	<script>
+	
+
+	
+	$(document)
+    .ready(function() {
+      $('.ui.dropdown').dropdown({
+		onChange:function(value,text){
+			var str = $('.ui.dropdown').dropdown('get value');
+			var array = str.toString().split(',');
+			if((array[0]!=null && array[0]!='') && (array[1]!=null && array[1]!='') && (array[2]!=null && array[2]!='')){
+				gotoTime("2016-"+array[1]+"-"+array[0]+" "+array[2]);
+			}
+			if(array[3]!=null){
+				setHighlightCount(array[3]);
+			}else{
+				setHighlightCount(-1);
+			}
+			
+		}
+      });
+	  
+	  $('.ui.dropdown').dropdown("set selected", "-1");
+
+    })
+  ;
+  
+$('.ui.test.toggle.checkbox.second')
+  .checkbox(
+  {
+    
+    
+    onChange: function() {
+		var tapsout = $('#viewByTapsOut').prop('checked') ? 'on' : 'off';
+
+	    var spending = $('#viewBySpending').prop('checked') ? 'on' : 'off';
+
+		 if(tapsout=='on'){
+			window.location.href ='index.html';
+		 } 
+		 else if(spending=='on'){
+			window.location.href ='spending.html';
+		 }
+
+
+    }
+  });
+  
+  $('.ui.test.toggle.checkbox.first')
+  .checkbox(
+  {
+    
+	onUnchecked: function() {
+	   $('.ui.test.toggle.checkbox.second').checkbox('set checked');
+	   			window.location.href ='spending.html';
+
+
+    }
+  });
+  
+   $('.ui.test.toggle.checkbox.second')
+  .checkbox(
+  {
+    
+	onChecked: function() {
+	   $('.ui.test.toggle.checkbox.first').checkbox('set unchecked');
+	   			window.location.href ='spending.html';
+
+
+    }
+  });
+  
+  
+  $('.test.checkbox').checkbox('attach events', '.toggle.button');
+
+
+  function chart1(){
+	var chart1 = document.getElementById("slot2-container").style.visibility;
+	if(chart1=='hidden'){
+		document.getElementById("slot2-container").style.visibility='visible';
+	}else if(chart1=='visible'){
+		document.getElementById("slot2-container").style.visibility='hidden';
+	}
+  }
+  
+    function chart2(){
+	var chart2 = document.getElementById("slot4-container").style.visibility;
+	if(chart2=='hidden'){
+		document.getElementById("slot4-container").style.visibility='visible';
+	}else if(chart2=='visible'){
+		document.getElementById("slot4-container").style.visibility='hidden';
+	}
+  }
+  
+  var QueryString = function () {
+  // This function is anonymous, is executed immediately and 
+  // the return value is assigned to QueryString!
+ 
+};
+  
+	window.onload = function () {
+	
+	var param1var = getQueryVariable("authen");
+	if(param1var=='passed'){
+
+				dataAPI.login('apiuser01', 'password', '')
+				.then(function(result){
+					console.log(result);
+					if(!result.error)
+						login();
+					else
+					{
+						loginShake();
+					}
+				});
+				
+	/*
+			doBlur(false);
+
+			var o = document.querySelector(loginId);
+			o.addEventListener('animationend', loginDone);
+			o.classList.add('animated');
+			o.classList.add('bounceOutUp');			
+			document.getElementById('login-page').style.visibility = 'hidden';
+			*/
+
+
+	}
+	
+	var param2var = getQueryVariable("datasetName");
+	if(param2var!=null){
+			//alert("param2var>>"+param2var);
+			//changeUserDataSet(param2var);
+			datasetName = param2var;
+	}
+};
+
+function getQueryVariable(variable) {
+  var query = window.location.search.substring(1);
+  var vars = query.split("&");
+  for (var i=0;i<vars.length;i++) {
+    var pair = vars[i].split("=");
+    if (pair[0] == variable) {
+      return pair[1];
+    }
+  } 
+}
+
+function changeDataSet(){
+	var tempDS = document.getElementById("dsname1").value;
+	window.location.href = "index.html?authen=passed&datasetName="+tempDS;
+
+}  
+  
+
+	</script>
+
+</body>
+
+</html>

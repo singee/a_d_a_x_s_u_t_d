@@ -1,0 +1,158 @@
+	<style>
+		dummy{}
+
+		#dateDisplay
+		{
+			position:fixed;
+			/*left:108px;*/
+			top:60px;
+			right: 10px;
+			width:200px;
+			height:16px;
+			font:12px Sans-Serif lighter;
+			text-align:center;
+			vertical-align:center;
+			background-color:rgba(0,0,0,0.5);
+			color:White;
+			cursor: default;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+			pointer-events: auto;
+		}
+		#timeDisplay
+		{
+			position:fixed;
+			/*left:105px;*/
+			right: 6px;
+			top:60px;
+			width:1010px;
+			height:60px;
+			font-size:1.2em;
+			text-align:center;
+			line-height:1.2em;
+			color:White;
+			background-color:rgba(0,0,0,0.5);
+			box-shadow: 1px 1px 6px 2px rgba(3,3,3,0.1);
+			cursor: default;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+			pointer-events: auto;
+		}
+		#timeProgressBar1
+		{
+			position:fixed;
+			/*left:110px;*/
+			right: 10px;
+			top:82px;
+			width:1000px;
+			height:10px;
+			background:rgba(255,0,0,0.25);
+			cursor: default;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+			pointer-events: auto;
+		}
+		#timeProgressBar2
+		{
+			position:fixed;
+			/*left:112px;*/
+			right: 10px;
+			top:82px;
+			width:10px;
+			height:10px;
+			background:rgba(0,0,0,0.5);
+			cursor: default;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+			pointer-events: auto;
+		}
+		#speedDisplayBackButtons
+		{
+			position:fixed;
+			right:0px;
+			top:130px;
+			width:45px;
+			height:250px;
+			border-radius:4px 0px 0px 4px;
+			background:rgba(102,128,150,0.9);
+			/*box-shadow: 0px 0px 10px rgba(0,0,0,.5);*/
+			box-shadow: 1px 1px 6px 2px rgba(3,3,3,0.1);
+			line-height:45px;
+			pointer-events: auto;
+		}
+		.ControlButtonType3
+		{
+			width:100%;
+			height:49px;
+			font:14px Sans-Serif;
+			line-height:45px;
+			text-align:center;
+			cursor: default;
+			color: rgb(0,0,0);
+			float: left;
+			border-bottom:solid 1px rgba(0,0,0,0.5);
+		}
+
+		#checkX0
+		{
+			border-radius:0px 20px 0px 0px;
+		}
+		#checkX4
+		{
+			border-radius:20px 0px 0px 0px;
+		}
+
+		.check
+		{
+			transition: color 0.5s ease;
+			color: white;
+		}
+		.uncheck
+		{
+			transition: color 0.5s ease;
+			color: black;
+		}
+
+		#timeProgressBar1 chart {
+			font-size: 11px;
+			font-weight: 100;
+			fill: none;
+			stroke: #fff;
+
+			position:fixed;
+			/*left:108px;*/
+			right: 12px;
+			top:-50px;
+			padding: 0;
+			margin: 0;
+		}
+
+		#timeProgressBar1 .axis path, #timeProgressBar1 .axis line {
+			shape-rendering: crispEdges;
+			fill: none;
+			stroke: #fff;
+		}
+
+		#timeProgressBar1 .axis text {
+			shape-rendering: crispEdges;
+			font-size: 0.8em;
+			fill: #ddd;
+		}
+
+	</style>

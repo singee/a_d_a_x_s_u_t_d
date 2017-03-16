@@ -1,0 +1,223 @@
+////////////////////////////////////////////////
+// Data operations
+////////////////////////////////////////////////
+
+var planningAreaName = 'PlanningArea2013';
+var planningAreaNames;
+
+var datasetName = 'OD_MRT';
+var independent = 'STARTTRAVELDATE';
+var odData;
+var startRegions = {};
+
+function getData()
+{
+	return Promise.resolve()
+	.then(getTimeRange)
+	.then(getPlanningArea)
+	.then(getODData)
+	.then(aggregateODData)
+}
+
+function getTimeRange()
+{
+	var id;
+	return dataAPI.getResId(datasetName)
+	.then(function(result){
+		id = result;
+		return dataAPI.queryResourceData(id, 0, 1, null, {_id:'asc'})
+		.then(function(result){
+			if(result.success)
+			{
+				var item = result.result.entities[0];
+				startTimeMS = moment(item[independent]).valueOf();
+				console.log('start', startTimeMS);
+			}
+			else
+				throw(result)
+		})
+		.then(function(){
+			return dataAPI.queryResourceData(id, 0, 1, null, {_id:'desc'})
+		})
+		.then(function(result){
+			if(result.success)
+			{
+				var item = result.result.entities[0];
+				endTimeMS = moment(item[independent]).valueOf();
+				console.log('end', endTimeMS);
+			}
+			else
+				throw(result)
+		})
+		.then(function(){
+			adax.timeKeeper.init(startTimeMS, endTimeMS, 1000)
+			timeline = new Timeline();
+
+			// corresponds to the 4 buttons
+			var rates = [
+				15*60,
+				30*60,
+				60*60,
+				60*60*24
+			];
+			timeline.init(adax.timeKeeper, document.querySelector('#timeline'), rates)
+		})
+	})
+}
+
+function getPlanningArea()
+{
+	console.log('getPlanningArea...')
+	return dataAPI.getResJson(planningAreaName)
+	.then(groupPlanningAreaNames)
+}
+
+function groupPlanningAreaNames(json)
+{
+	planningAreaNames = {};
+	json.forEach(function(row){
+		var name = row['region']
+		if(!(name in planningAreaNames))
+			planningAreaNames[name] = {};
+		var pa = planningAreaNames[name];
+		var subgroup = row['index'];
+		if(!(subgroup in pa))
+			pa[subgroup] = [];
+		pa[subgroup].push([row['lat'], row['lon']]);
+	})
+	console.log('done')
+}
+
+function getODData()
+{
+	console.log('getODData...')
+/*
+	return new Promise(function(resolve, reject){
+		odData = [];
+		return dataAPI.getResJsonStream(datasetName, 0, function(json){
+			if(json.length > 0)
+			{
+				convertTimestamp(json);
+				odData.push.apply(odData, json);
+				console.log(json.length, odData.length);
+			}
+			else
+			{
+				console.log('done')
+				resolve()
+			}
+		}, 20000);
+	})
+*/
+
+	// test data
+	return adax.get('od_mrt_1day.csv')
+	.then(function(result){
+		var lines = result.split('\n');
+		var header = lines.shift().split(',');
+		for(var j=0; j<header.length; ++j)
+			header[j] = header[j].trim();
+		var last = lines[lines.length-1];
+		if(last.length < 2)
+			lines.pop();
+		console.log(header)
+		var json = lines.map(function(line, i){
+			var tokens = line.split(',');
+			var row = {};
+			for(var j=0; j<tokens.length; ++j)
+			{
+				var col = header[j];
+				row[col] = tokens[j];
+			}
+			return row;
+		})
+
+		return json;
+	})
+	.then(function(json){
+		convertTimestamp(json);
+		odData = json;
+		//console.log(odData)
+		console.log('done')
+	})
+
+}
+
+var maxN = 0;
+function aggregateODData(){
+	odData.forEach(function(row, index){
+		//console.log(row)
+		var start = row['STARTREGION'].split('_')[0];
+		var end = row['ENDREGION'].split('_')[0];
+		var n = +row['NUMVISITS'];
+
+		if(!(start in startRegions))
+		{
+			startRegions[start] = {};
+		}
+		startR = startRegions[start];
+		if(!(end in startR))
+		{
+			startR[end] = n;
+		}
+		else
+		{
+			startR[end] += n;
+		}
+		if(maxN < startR[end])
+			maxN = startR[end];
+	})
+	console.log('maxN', maxN);
+}
+
+function convertTimestamp(json){
+	json.forEach(function(row){
+		var time = row[independent];
+		row.timestamp = moment(time).valueOf(); // convert to unix epoc time
+	})
+}
+
+function queryData(data, field, value)
+{
+	var cv;
+	var d = [];
+	for(var i=0; i<data.length; ++i)
+	{
+		var item = data[i];
+		var v = item[field];
+		if(value <= v)
+		{
+			if(cv == undefined)
+				cv = v;
+			if(cv == v)
+				d.push(item)
+			else
+				break;
+		}
+	}
+
+	return Promise.resolve(d);
+}
+
+
+function queryDataRange(data, field, value1, value2)
+{
+	var cv;
+	var d = [];
+	for(var i=0; i<data.length; ++i)
+	{
+		var item = data[i];
+		var v = item[field];
+		if(v>=value1 && v<value2)
+		{
+			if(cv == undefined)
+				cv = v;
+			d.push(item)
+		}
+		if(v>=value2)
+			break;
+	}
+
+	return Promise.resolve(d);
+}
+

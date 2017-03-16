@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<title>1GFS X-SMART Demo</title>
+
+	<link rel="stylesheet" href="b/css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/font.css">
+	<link rel="stylesheet" href="css/animate.css">
+	<link rel="stylesheet" href="css/sidebar.css">
+	<link rel="stylesheet" href="css/loading.css">
+	<link rel="stylesheet" href="css/login.css">
+	<link rel="stylesheet" href="css/blur.css">
+	<link rel="stylesheet" href="css/timeline.css">
+
+	<link rel="stylesheet" href="css/semantic_ui/semantic.min.css">
+
+	<style type="text/css">
+
+		body {
+			/*
+			background: #76b852;
+			background: -webkit-linear-gradient(right, #76b852, #8DC26F);
+			background: -moz-linear-gradient(right, #76b852, #8DC26F);
+			background: -o-linear-gradient(right, #76b852, #8DC26F);
+			*/
+			background: linear-gradient(to bottom, #ACF, #A3CCFF);
+			/*
+			background-image: url('bg-sample.jpg');
+			background-size: cover;
+			background-position: top center !important;
+			background-repeat: no-repeat !important;
+			*/
+
+			font-family: "roboto", sans-serif;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+			background-color: #f0f0f0;
+			background-image: url("http://www.transparenttextures.com/patterns/cubes.png");
+
+			/* overflow: hidden; */
+		}
+
+		#wrapper {
+				-webkit-filter: blur(0px);
+				filter: blur(0px);
+		}
+
+		.card {
+			position: relative;
+			height: 100%;
+			/*outline: dashed rgba(0, 0, 0, 0.25);*/
+			background: transparent;
+			pointer-events: all;
+		}
+
+		#page-content-wrapper-1 {
+			-webkit-transition: all 0.3s ease;
+			transition: all 0.3s ease;
+			/*
+			left: 187.5px;
+			*/
+		}
+
+		.signage {
+			position: absolute;
+			outline: dashed rgba(0, 0, 0, 0.25);
+			background: rgba(250, 250, 250, 0.8);
+			padding: 10px;
+			color: black;
+			font-size: 12px;
+			opacity: 0;
+
+			pointer-events: none;
+
+			-webkit-transition: all 0.3s ease;
+			transition: all 0.3s ease;
+		}
+
+		.highlight {
+			/*font-size: 14px;*/
+			opacity: 1;
+		}
+
+		.current-app
+		{
+			color: rgb(255, 0, 0);
+		}
+
+		.underlay {
+			position: absolute;
+			left: 0;
+			top: 80px;
+			right: 0;
+			margin: 0;
+			/* padding: 0; */
+		}
+
+		#layers-menu {
+			position: absolute;
+			top: 60px;
+			right: 0px;
+			width: 200px;
+
+			-webkit-animation-duration: 0.3s;
+			animation-duration: 0.3s;
+		}
+
+		#apps-menu {
+			position: absolute;
+			top: 60px;
+			right: 0px;
+			width: 200px;
+
+			-webkit-animation-duration: 0.3s;
+			animation-duration: 0.3s;
+		}
+
+		.list-group-item {
+			-webkit-transition: all 0.3s;
+			transition: all 0.3s;
+		}
+		.list-group-item:hover {
+			background-color: rgb(200,220,250);
+		}
+
+		.phantom {
+			position: absolute;
+			width: 48%;
+			height: 100px;
+			background: rgba(255, 255, 255, 0.9);
+/*
+			-ms-transform: scale(0.5, 0.5);
+			-webkit-transform: scale(0.5, 0.5);
+			transform: scale(0.5, 0.5);
+*/
+
+			box-shadow: 1px 1px 6px 2px rgba(3,3,3,0.1);
+		}
+		.phantom-left {
+			/*
+			-ms-transform-origin: left bottom;
+			-webkit-transform-origin: left bottom;
+			transform-origin: left bottom;
+			*/
+			
+			left: 10px; bottom: 10px;
+		}
+		.phantom-right {
+			/*
+			-ms-transform-origin: right bottom;
+			-webkit-transform-origin: right bottom;
+			transform-origin: right bottom;
+			*/
+
+			right: 10px; bottom: 10px;
+		}
+		.phantom2 {
+			/*position: relative;*/
+			width: 100%;
+			height: 100%;
+		}
+		.phantom-handle {
+			position: relative;
+			width: 100%;
+			height: 0px;
+			/*
+			top: -204px;
+			bottom: 204px;
+			*/
+
+			background: rgba(255, 10, 10, 0.75);
+			/*box-shadow: 1px 1px 6px 2px rgba(3,3,3,0.5);*/
+
+			-webkit-transition-duration: 0.3s;
+			transition-duration: 0.3s;
+		}
+
+		.container
+		{
+			position:absolute;
+			left:0px;
+			top:0px;
+			right:0px;
+			bottom:0px;
+			width: 100%;
+		/* overflow:hidden; */
+			/*background: rgba(0,0,0,0.2);*/
+			pointer-events: none;
+			padding: 0;
+			margin: 0;
+		}
+		
+		.ui.selection.dropdown{
+			margin-top: 20px;
+		}
+
+	</style>
+
+</head>
+
+<body>
+
+	<div class="navbar navbar-default navbar-static-top" style="margin: 0; box-shadow: 0px 4px 6px rgba(0,0,0,0.1);">
+		<button class="btn navbar-btn" style="background:transparent; outline: none;" onclick="toggleSidebar()">
+		</button>
+		<strong style="font:roboto-bold">1GFS X<span style="color:#1e90ff;font-size:120%;">-</span>SMART</strong> | Ezlink Demo
+		<div class="pull-right spinner"></div>
+
+		<!--button type="button" class="pull-right btn navbar-btn" style="background:transparent; outline: none; margin: 0;" onclick="logout()">
+			<div class="row">
+				<span class="glyphicon glyphicon-log-out"></span>
+			</div>
+			<small>Logout</small>
+		</button-->
+<button class="ui mini negative basic button right floated compact" style="margin-top:12px;" onclick="logout()">
+	Log Out  <i class="sign out icon"></i>
+</button>
+
+
+	</div>
+	
+		<div id="wrapper" >
+		
+		<!-- Page Content -->
+		<div id="page-content-wrapper-1">
+			<div class="container-fluid">
+				<div class="row underlay" style="background-color: #f0f0f0; background-image: url('http://www.transparenttextures.com/patterns/cubes.png');">
+					<div class="col-lg-12">
+						
+
+	
+	
+	
+<div class="principal" >
+  <div class="ui grid">
+    <div class="four wide column">
+      <div class="ui sticky">
+        <div class="ui fluid inverted blue vertical labeled icon menu" id="menu">
+          <div class="item"><i class="copyright icon"></i><span>1GFS X-SMART</span></div>
+		  <a class="item" href="https://52.221.236.100/search" target="_blank"><i class="database icon"></i><span>Data Sets</span></a>
+		  <a class="item" href="http://52.221.236.100:8080/ezlink/fileUpload.html?authen=passed" target="_blank"><i class="cloud upload icon"></i><span>File Upload</span></a>
+          <div class="item"><i class="copyright icon"></i><span>Data Visualizations, 2017</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="twelve wide column">
+      <!--div class="ui buttons primeiro" id="filtros">
+        <div class="ui black active button" data-filter="*">All</div>
+        <div class="ui red button" data-filter=".web">#1</div>
+        <div class="ui blue button" data-filter=".math">#2</div>
+        <div class="ui red button" data-filter=".ai">#3</div>
+        <div class="ui blue button" data-filter=".mobile">#4</div>
+        <div class="ui red button" data-filter=".op">#5</div>
+        <div class="ui blue button" data-filter=".game">#6</div>
+      </div-->
+      <div id="contentor">
+	  <div class="ui three column stackable doubling grid">
+		<div class="column">
+        <div class="ui card ai">
+          <div class="content"><a class="header" href="index.html?authen=passed" target="_blank">Barcharts:Taps Out on MRT</a>
+            <div class="meta"><span class="date">Dataset: MRTTapOuts</span></div>
+            <div class="description">The total number of taps out at all MRT stations from January to March, 2016</div>
+          </div>
+          <div class="extra content">
+                <div class="ui slide masked reveal image"><img class="visible content" src="images/TapsOut.jpg"/><img class="hidden content" src="images/TapsOut.jpg"/></div>
+          </div>
+        </div>
+		</div>
+		<div class="column">
+        <div class="ui card ai">
+          <div class="content"><a class="header" href="http://52.221.236.100:8080/by-passenger-type?authen=passed" target="_blank">Stacked Barcharts:Passenger Types on MRT</a>
+            <div class="meta"><span class="date">Dataset: HeatmapMRTCommuterTypes</span></div>
+           
+            <div class="description">
+					Three types of passengers : Students/Children, Senior Citizens and Torists at all MRT stations on March, 2016              
+            </div>
+          </div>
+		  <div class="extra content">
+                <div class="ui slide masked reveal image"><img class="visible content" src="images/PassengerTypes.jpg"/><img class="hidden content" src="images/TapsOut.jpg"/></div>
+          </div>
+        </div>
+		</div>
+		<div class="column">
+        <div class="ui card ai">
+          <div class="content"><a class="header" href="http://52.221.236.100:8080/heatmap?authen=passed" target="_blank">Heat Map:Passenger Types on MRT</a>
+            <div class="meta"><span class="date">Dataset: HeatmapMRTCommuterTypes</span></div>
+           
+            <div class="description">
+					Three types of passengers : Students/Children, Senior Citizens and Torists at all MRT stations on March, 2016              
+            </div>
+          </div>
+		  <div class="extra content">
+                <div class="ui slide masked reveal image"><img class="visible content" src="images/HeatMap.jpg"/><img class="hidden content" src="images/HeatMap.jpg"/></div>
+          </div>
+        </div>
+		</div>
+		</div>
+		
+		<div class="ui three column stackable doubling grid">
+
+		<div class="column">
+        <div class="ui card ai">
+          <div class="content"><a class="header" href="http://52.221.236.100:8080/mrt-trips?authen=passed" target="_blank">Waterfall Model:MRT Trips on Regions</a>
+            <div class="meta"><span class="date">Dataset: OD_MRT</span></div>
+           
+            <div class="description">
+					MRT trips from one region to other regions of Singapore on March, 2016              
+            </div>
+          </div>
+		  <div class="extra content">
+                <div class="ui slide masked reveal image"><img class="visible content" src="images/WaterFall.jpg"/><img class="hidden content" src="images/HeatMap.jpg"/></div>
+          </div>
+        </div>
+		</div>
+		<div class="column">
+        <div class="ui card ai">
+          <div class="content"><a class="header" href="http://52.221.236.100:8080/bus-trips?authen=passed" target="_blank">Waterfall Model:Bus Trips on Regions</a>
+            <div class="meta"><span class="date">Dataset: OD_Bus</span></div>
+           
+            <div class="description">
+					Bus trips from one region to other regions of Singapore on March, 2016              
+            </div>
+          </div>
+		  <div class="extra content">
+                <div class="ui slide masked reveal image"><img class="visible content" src="images/WaterFall.jpg"/><img class="hidden content" src="images/HeatMap.jpg"/></div>
+          </div>
+        </div>
+		</div>
+		
+		<div class="column">
+        <div class="ui card ai">
+          <div class="content"><a class="header" href="http://52.221.236.100:8080/slides/" target="_blank">Pie Charts:Statistics for Singapore Public Transport</a>
+            <div class="meta"><span class="date">Dataset: </span></div>
+           
+            <div class="description">
+					Statistics on public transport data of Singapore
+            </div>
+          </div>
+		  <div class="extra content">
+                <div class="ui slide masked reveal image"><img class="visible content" src="images/piechart.jpg"/><img class="hidden content" src="images/HeatMap.jpg"/></div>
+          </div>
+        </div>
+		</div>
+		
+		
+        </div>
+       
+       
+      </div>
+    </div>
+  </div>
+</div>
+	
+	
+	
+
+
+
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+<div class="ui hidden clearing divider"></div>
+
+
+</div>
+	
+	
+	
+
+
+
+
+	<div class="login-page">
+		<div class="form">
+			<form class="login-form">
+				<input type="text" placeholder="username" id="nameInput" value="apiuser01"/>
+				<input type="password" placeholder="password" id="passwordInput" value="password"/>
+				<div onclick="processLogin()" id="submitButton">login</div>
+				<p class="message">Not registered? <a href="http://10.217.133.188:8085">Create an account</a></p>
+			</form>
+		</div>
+	</div>
+
+	<div id="timeline" class="container">
+	
+	
+	</div>
+
+	<div class="signage"></div>
+
+
+	<script src="js/adax-bundle.min.js"></script>
+	<script src="js/helpers.js"></script>
+
+	<script src="js/jquery.min.js"></script>
+	<script src="b/js/bootstrap.min.js"></script>
+
+	<script src="js/moment.min.js"></script>
+	<script src="js/crossfilter.min.js"></script>
+	<script src="js/jquery.slimscroll.min.js"></script>
+
+	<script src="js/misc.js"></script>
+
+	<script src="js/gsap/TweenLite.min.js"></script>
+	<script src="js/gsap/utils/Draggable.min.js"></script>
+	<script src="js/gsap/plugins/CSSPlugin.min.js"></script>
+
+	<script src="js/semantic.min.js"></script>
+
+	<!-- the main code goes here now -->
+	<script src="js/main.js"></script>
+
+	<script>
+			 $(document)
+    .ready(function() { 
+
+    })
+  ;
+  
+   window.onload = function () {
+  
+  var param1var = getQueryVariable("authen");
+  if(param1var=='passed'){
+
+        dataAPI.login('apiuser01', 'password', '')
+        .then(function(result){
+          console.log(result);
+          if(!result.error)
+            login();
+          else
+          {
+            loginShake();
+          }
+        });
+
+  }
+};
+
+    function getQueryVariable(variable) {
+      var query = window.location.search.substring(1);
+      var vars = query.split("&");
+      for (var i=0;i<vars.length;i++) {
+      var pair = vars[i].split("=");
+      if (pair[0] == variable) {
+        return pair[1];
+      }
+      } 
+    }
+  
+
+	</script>
+
+</body>
+
+</html>

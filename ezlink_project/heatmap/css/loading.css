@@ -1,0 +1,10 @@
+        .spinner {
+            background-image: url('../data/squares.gif');
+            background-size: cover;
+            background-position: top center !important;
+            background-repeat: no-repeat !important;
+            width: 32px;
+            height: 32px;
+            -webkit-animation-duration: 0.3s;
+            animation-duration: 0.3s;
+        }
